@@ -30,12 +30,12 @@
 
 module hsync
 (
-    input wire  mclk, clk7_159, _hreset, h16, h32, h64,
+    input wire  mclk, _hreset, h16, h32, h64,
     output wire hblank, _hblank, _hsync
 );
 
 // hack-hack: "and" with clock to simulate propagation delay of ripple counter...
-srlatch h5bc(mclk, ~(h16 & h64 & clk7_159), _hreset, _hblank, hblank);
+srlatch h5bc(~mclk, ~(h16 & h64), _hreset, _hblank, hblank);
 assign _hsync = ~(hblank & h32);
 
 endmodule

@@ -31,7 +31,6 @@
 `default_nettype none
 
 module pong(
-    input wire mclk,
     input wire clk7_159, coin_sw,
     input wire [7:0] dip_sw, // dip_sw[0] - 0: 11 points, 1: 15 points
     input wire [7:0] paddle1_vpos,
@@ -54,7 +53,7 @@ hcounter hc(clk7_159, h1, h2, h4, h8, h16, h32, h64, h128, h256, _h256, hreset, 
 
 // hsync
 wire _hblank;
-hsync hs(mclk, clk7_159, _hreset, h16, h32, h64, hblank, _hblank, _hsync);
+hsync hs(clk7_159, _hreset, h16, h32, h64, hblank, _hblank, _hsync);
 assign hsync = ~_hsync;
 
 // vcounter
@@ -69,7 +68,7 @@ vcounter vc(hreset, v1, v2, v4, v8, v16, v32, v64, v128, v256, _v256, vreset, _v
 /* verilator lint_off UNOPTFLAT */
 wire _vblank;
 /* verilator lint_on UNOPTFLAT */
-vsync vs(mclk, vreset, v4, v8, v16, vblank, _vblank, _vsync);
+vsync vs(clk7_159, vreset, v4, v8, v16, vblank, _vblank, _vsync);
 assign vsync = ~_vsync;
 
 // net
