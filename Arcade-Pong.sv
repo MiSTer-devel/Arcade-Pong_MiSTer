@@ -103,6 +103,8 @@ localparam CONF_STR = {
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"-;",
 	"O8,Max Points,11,15;",
+	"O9A,Control P1,Y,X,Inv-X;",
+	"OBC,Control P2,Y,X,Inv-X;",
 	"-;",
 	"R0,Reset;",
 	"J1,Start;",
@@ -213,7 +215,7 @@ always @(posedge clk_vid) begin
 	ce_pix <= !div; 
 end
 
-arcade_fx #(375, 12) arcade_video
+arcade_video #(.WIDTH(375), .DW(12)) arcade_video
 (
 	.*,
 
@@ -225,6 +227,8 @@ arcade_fx #(375, 12) arcade_video
 	.HSync(hs),
 	.VSync(vs),
 
+	.no_rotate(1),
+	.rotate_ccw(0),
 	.fx(status[5:3])
 );
 
@@ -233,8 +237,8 @@ assign AUDIO_L = {~audio, 12'd0};
 assign AUDIO_R = AUDIO_L;
 assign AUDIO_S = 0;
 
-wire [7:0] paddle1_vpos = joystick_analog_0[15:8] + 8'h80;
-wire [7:0] paddle2_vpos = joystick_analog_1[15:8] + 8'h80;
+wire [7:0] paddle1_vpos = (!status[10:09]) ? (joystick_analog_0[15:8] + 8'h80) : status[09] ? (joystick_analog_0[7:0] + 8'h80) : (joystick_analog_0[7:0] ^ 8'h7F);
+wire [7:0] paddle2_vpos = (!status[12:11]) ? (joystick_analog_1[15:8] + 8'h80) : status[11] ? (joystick_analog_1[7:0] + 8'h80) : (joystick_analog_1[7:0] ^ 8'h7F);
 
 pong pong
 (
