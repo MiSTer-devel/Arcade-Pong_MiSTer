@@ -119,6 +119,9 @@ assign LED_USER  = ioctl_download;
 assign LED_DISK  = 0;
 assign LED_POWER = 0;
 
+assign {FB_EN,FB_FORMAT,FB_WIDTH,FB_HEIGHT,FB_BASE,FB_STRIDE,FB_FORCE_BLANK,FB_PAL_CLK,FB_PAL_ADDR,FB_PAL_DOUT,FB_PAL_WR} = '0;
+assign {DDRAM_CLK,DDRAM_BURSTCNT,DDRAM_ADDR,DDRAM_RD,DDRAM_DIN,DDRAM_BE,DDRAM_WE} = '0;
+
 wire [1:0] ar = status[15:14];
 
 assign VIDEO_ARX = (!ar) ? 8'd4 : (ar - 1'd1);
@@ -132,8 +135,8 @@ localparam CONF_STR = {
 	"O35,Scandoubler Fx,None,HQ2x,CRT 25%,CRT 50%,CRT 75%;",
 	"-;",
 	"O8,Max Points,11,15;",
-	"O9A,Control P1,Y,X,Inv-X;",
-	"OBC,Control P2,Y,X,Inv-X;",
+	"O9A,Control P1,Y,X,Inv-X,Paddle;",
+	"OBC,Control P2,Y,X,Inv-X,Paddle;",
 	"-;",
 	"R0,Reset;",
 	"J1,Start;",
@@ -171,6 +174,8 @@ wire [10:0] ps2_key;
 wire [15:0] joystick_0, joystick_1;
 wire [15:0] joystick_analog_0;
 wire [15:0] joystick_analog_1;
+wire  [7:0] paddle_0;
+wire  [7:0] paddle_1;
 
 wire [15:0] joy = joystick_0 | joystick_1;
 
@@ -199,6 +204,8 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.joystick_1(joystick_1),
 	.joystick_analog_0(joystick_analog_0),
 	.joystick_analog_1(joystick_analog_1),	
+	.paddle_0(paddle_0),
+	.paddle_1(paddle_1),
 	.ps2_key(ps2_key)
 );
 
@@ -263,8 +270,8 @@ assign AUDIO_L = {~audio, 12'd0};
 assign AUDIO_R = AUDIO_L;
 assign AUDIO_S = 0;
 
-wire [7:0] paddle1_vpos = (!status[10:09]) ? (joystick_analog_0[15:8] + 8'h80) : status[09] ? (joystick_analog_0[7:0] + 8'h80) : (joystick_analog_0[7:0] ^ 8'h7F);
-wire [7:0] paddle2_vpos = (!status[12:11]) ? (joystick_analog_1[15:8] + 8'h80) : status[11] ? (joystick_analog_1[7:0] + 8'h80) : (joystick_analog_1[7:0] ^ 8'h7F);
+wire [7:0] paddle1_vpos = (!status[10:09]) ? (joystick_analog_0[15:8] + 8'h80) : (status[10:09] == 1) ? (joystick_analog_0[7:0] + 8'h80) : (status[10:09] == 2) ? (joystick_analog_0[7:0] ^ 8'h7F) : paddle_0;
+wire [7:0] paddle2_vpos = (!status[12:11]) ? (joystick_analog_1[15:8] + 8'h80) : (status[12:11] == 1) ? (joystick_analog_1[7:0] + 8'h80) : (status[12:11] == 2) ? (joystick_analog_1[7:0] ^ 8'h7F) : paddle_1;
 
 pong pong
 (
