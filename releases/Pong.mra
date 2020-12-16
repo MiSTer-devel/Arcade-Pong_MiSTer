@@ -1,4 +1,11 @@
 <misterromdescription>
-	<name>Pong</name>
+	<name>Pong (Rev E) external [TTL]</name>
+	<mameversion>N/A</mameversion>
+	<setname>pong</setname>
+	<mratimestamp>202012161025</mratimestamp>
+	<year>1972</year>
+	<manufacturer>Atari</manufacturer>
+	<category>TTL * Ball and Paddle</category>
+	<category>TTL * Ball and Paddle / Pong</category>
 	<rbf>Pong</rbf>
 </misterromdescription>
