@@ -140,6 +140,7 @@ localparam CONF_STR = {
 	"-;",
 	"R0,Reset;",
 	"J1,Start;",
+	"jn,Start;",
 	"V,v",`BUILD_DATE
 };
 
@@ -205,39 +206,11 @@ hps_io #(.STRLEN($size(CONF_STR)>>3)) hps_io
 	.joystick_analog_0(joystick_analog_0),
 	.joystick_analog_1(joystick_analog_1),	
 	.paddle_0(paddle_0),
-	.paddle_1(paddle_1),
-	.ps2_key(ps2_key)
+	.paddle_1(paddle_1)
 );
 
-wire       pressed = ps2_key[9];
-wire [8:0] code    = ps2_key[8:0];
-always @(posedge clk_sys) begin
-	reg old_state;
-	old_state <= ps2_key[10];
-	
-	if(old_state != ps2_key[10]) begin
-		casex(code)
-			// JPAC/IPAC/MAME Style Codes
-			'h005: btn_one_player  <= pressed; // F1
-			'h006: btn_two_players <= pressed; // F2
-			'h016: btn_start_1     <= pressed; // 1
-			'h01E: btn_start_2     <= pressed; // 2
-			'h02E: btn_coin_1      <= pressed; // 5
-			'h036: btn_coin_2      <= pressed; // 6
-		endcase
-	end
-end
 
-reg btn_one_player  = 0;
-reg btn_two_players = 0;
-reg btn_start_1=0;
-reg btn_start_2=0;
-reg btn_coin_1=0;
-reg btn_coin_2=0;
-
-wire m_start1 = btn_one_player  | btn_start_1 | joy[4];
-wire m_start2 = btn_two_players | btn_start_2;
-wire m_start  = m_start1 | m_start2;
+wire m_start = joy[4];
 
 wire hblank, vblank;
 wire hs, vs;
@@ -276,7 +249,7 @@ wire [7:0] paddle2_vpos = (!status[12:11]) ? (joystick_analog_1[15:8] + 8'h80) :
 pong pong
 (
 	.clk7_159(clk_sys),
-	.coin_sw(m_start|btn_coin_1|btn_coin_2|status[0]|buttons[1]),
+	.coin_sw(m_start|status[0]|buttons[1]),
 	.dip_sw(status[8]),
 	.paddle1_vpos(paddle1_vpos),
 	.paddle2_vpos(paddle2_vpos),
