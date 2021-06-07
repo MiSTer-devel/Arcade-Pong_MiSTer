@@ -109,7 +109,7 @@ localparam CONF_STR = {
 	"R0,Reset;",
 	"J1,Start,Coin;",
 	"jn,Start,R;",
-	"jp,Start,Select;",
+	"jp,Start,R;",
 	"V,v",`BUILD_DATE
 };
 
@@ -201,10 +201,10 @@ reg btn_start_2=0;
 reg btn_coin_1=0;
 reg btn_coin_2=0;
 
-wire m_start1 = btn_one_player  | btn_start_1 | joy[4];
-wire m_start2 = btn_two_players | btn_start_2;
+wire m_start1 = btn_one_player  | btn_start_1 | joystick_0[4];
+wire m_start2 = btn_two_players | btn_start_2 | joystick_1[4];
 wire m_start  = m_start1 | m_start2;
-wire m_coin = btn_coin_1 | btn_coin2 | joy[5];
+wire m_coin = btn_coin_1 | btn_coin_2 | joy[5];
 
 wire hblank, vblank;
 wire hs, vs;
